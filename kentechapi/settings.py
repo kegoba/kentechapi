@@ -23,7 +23,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
-ALLOWED_HOSTS = ['localhost',  '127.0.0.1']
+ALLOWED_HOSTS = ['localhost','127.0.0.1', "kentechapi.onrender.com"]
 
 
 
@@ -82,12 +82,26 @@ DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 
 #if DEVELOPMENT_MODE is True:
+'''
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
+
+'''
+
+
+if not DEBUG:
+    DATABASES = {'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            #'NAME': 'db.sqlite3',
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }}
 
 
 # Password validation
