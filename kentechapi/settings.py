@@ -23,7 +23,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
-ALLOWED_HOSTS = ['http://localhost:3000','127.0.0.1', "kentechapi.onrender.com"]
+ALLOWED_HOSTS = ['localhost','127.0.0.1', "kentechapi.onrender.com"]
 
 
 
