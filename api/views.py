@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import UpdateAPIView
 from django.contrib.auth.hashers import make_password, check_password
 from django.conf import settings
+
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
@@ -108,6 +110,26 @@ def Logout_User(request)->  None :
     return Response(data={"message": "logout successful"})
 
 
+
+class Add_product(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request, *args, **kwargs):
+        product = Productserializer(data=request.data)
+        if product.is_valid():
+            product.save()
+            return Response(product.data, status= status.HTTP_200_OK)
+        return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(["GET"])
+def GetProduct( request):
+    if request.method == "GET":
+        get_product = Product.objects.all()
+        product = Productserializer(get_product, many=True)
+        return Response(product.data, status= status.HTTP_200_OK)
+    return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
+
 '''
 
 def product_list(request):
@@ -131,8 +153,6 @@ def remove_from_cart(request, item_id):
     cart_item = CartItem.objects.get(id=item_id)
     cart_item.delete()
     return redirect('cart:view_cart')
- 
- 
 
 
 '''

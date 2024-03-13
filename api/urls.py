@@ -9,6 +9,7 @@ urlpatterns =[
     #path("login/", views.Login_user, name="Login_user"),
     path("api/v1/register", views.RegisterUser, name="register_user"),
     path("api/v1/login", views.C_Login.as_view(), name="login"),
+    path("api/v1/addproduct", views.Add_product.as_view(), name="addproduct"),
 
-    #Update_user  RegisterUser, C_Login
+    #Update_user  RegisterUser, C_Login, Add_product
 ]

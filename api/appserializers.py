@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from  .models import CustomUser
+from  .models import CustomUser, Product, Cart, Vtu_transaction
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
@@ -22,9 +22,30 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ( 'password',
-                  'email', 'first_name', 'last_name', "username","profile", "phone")
+                  'email', 'first_name', 'last_name', "username","profile", "phone", "wallet")
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
         }
 
+
+
+class Productserializer(serializers.ModelSerializer):
+    class Meta:
+        model= Product
+        fields = ["product_id", "product_price", "product_category", "image", "product_desc" ] 
+
+
+
+
+
+class Cartserializer(serializers.ModelSerializer):
+    class Meta:
+        model= Cart
+        fields = ["id", "item", "user_id"]
+
+
+class Vtuserializer(serializers.ModelSerializer):
+    class Meta:
+        model= Vtu_transaction
+        fields = ["id", "transaction_type","phone", "ref_id", "amount", "user_id", "transaction_time"]
