@@ -63,4 +63,5 @@ class Cart(models.Model):
     cart_id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product, null=True,on_delete=models.CASCADE)
     item = models.CharField("Cart Item", null=True,  max_length=1000)
+    quantity = models.CharField("Cart Item", null=True,  max_length=1000)
     user_id = models.ForeignKey(CustomUser, null=True, related_name="cart_id", on_delete=models.CASCADE)

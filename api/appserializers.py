@@ -7,7 +7,6 @@ from django.contrib.auth.hashers import make_password
 #from models import Subscription, UserProfile from .appserializers import  UserSerializer
 
 
-    
 
 class RegisterSerializer(serializers.ModelSerializer):
     profile = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -42,7 +41,7 @@ class Productserializer(serializers.ModelSerializer):
 class Cartserializer(serializers.ModelSerializer):
     class Meta:
         model= Cart
-        fields = ["id", "item", "user_id"]
+        fields = ["id", "item", "user_id", "quantity"]
 
 
 class Vtuserializer(serializers.ModelSerializer):

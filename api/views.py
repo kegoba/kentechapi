@@ -16,8 +16,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 
-from .models import CustomUser
-from .appserializers import RegisterSerializer
+from .models import CustomUser, Product, Cart
+from .appserializers import RegisterSerializer, Productserializer,Cartserializer
 
 @api_view(["GET", "POST"])
 def Home(request):
@@ -114,24 +114,85 @@ def Logout_User(request)->  None :
 class Add_product(APIView):
     parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
-        product = Productserializer(data=request.data)
-        if product.is_valid():
-            product.save()
+        if request.method == "POST":
+            product = Productserializer(data=request.data)
+            if product.is_valid():
+                product.save()
+                return Response(product.data, status= status.HTTP_200_OK)
+            return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == "GET":
+            get_product = Product.objects.all()
+            product = Productserializer(get_product, many=True)
             return Response(product.data, status= status.HTTP_200_OK)
         return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
+        
+        
 
 
 
 @api_view(["GET"])
-def GetProduct( request):
+def Get_all_product( request):
     if request.method == "GET":
         get_product = Product.objects.all()
         product = Productserializer(get_product, many=True)
         return Response(product.data, status= status.HTTP_200_OK)
     return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
 
-'''
 
+
+@api_view(["GET"])
+def Get_one_product (request,id):
+    print(id)
+    if request.method == "GET":
+        get_product = Product.objects.filter(product_id=id)
+        product = Productserializer(get_product, many=True)
+        return Response(product.data, status= status.HTTP_200_OK)
+    return Response(product.errors, status= status.HTTP_400_BAD_REQUEST)
+
+    
+
+
+@api_view(["POST"])
+def Add_to_cart(request, id):
+    if request.method == "POST":
+        product = Product.objects.get(id=product_id)
+        item, created = Cart.objects.get_or_create(product=product, 
+                                                        user=request.user)
+        item.quantity += 1
+        item.save()
+        items = Cartserializer(item, many=True)
+
+        return Response(items.data, status= status.HTTP_200_OK)
+    return Response(items.errors, status= status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def Get_all_cart(request):
+    if request.method == "GET":
+        cart_items = CartItem.objects.filter(user=request.user_id)
+        total_price = sum(item.product.price * item.quantity for item in cart_items)
+        cart_details = {
+            'cart_items': cart_items,
+            'total_price': total_price
+            }
+        items = Cartserializer(cart_details, many=True)
+        return Response(items.data, status= status.HTTP_200_OK)
+    return Response(items.errors, status= status.HTTP_400_BAD_REQUEST)
+   
+
+@api_view(["DELETE"])
+def remove_from_cart(request,id):
+    if request.method =="DELETE":
+        cart_item = CartItem.objects.get(id=id)
+        cart_item.delete()
+        data ={
+            "message" : "item deleted successfully"
+        }
+    return Response(data)
+
+
+'''
 def product_list(request):
     products = Product.objects.all()
     return render(request, 'myapp/index.html', {'products': products})
